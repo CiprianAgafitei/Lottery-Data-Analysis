@@ -34,3 +34,8 @@ interval distributions, and exploratory pattern analysis.
 - No strong predictive patterns were found
 - Some clustering appears due to randomness, not causality
 - Consecutive numbers appear in ~60% of draws
+
+- ## Disclaimer
+
+This project is for educational and analytical purposes only.
+It does not provide any guaranteed method for predicting lottery results.
