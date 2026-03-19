@@ -23,24 +23,6 @@ interval distributions, and exploratory pattern analysis.
 - Streamlit
 - JSON for dataset storage
 
-## Project Structure
-
-loto-analysis/
-│
-├── data/
-│   └── loto_numbers.json
-│
-├── analysis/
-│   ├── frequency.py
-│   ├── interval_analysis.py
-│   ├── position_analysis.py
-│
-├── streamlit_app.py
-├── script.py
-│
-├── docs/
-│   └── documentation.pdf
-│
 ├── requirements.txt
 └── README.md
 
