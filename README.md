@@ -27,3 +27,10 @@ interval distributions, and exploratory pattern analysis.
 
 ![App Screenshot](assets/Home-loto1.png)
 ![App Screenshot](assets/Home-loto2.png)
+
+## Key Insights
+
+- Lottery numbers follow a uniform distribution over time
+- No strong predictive patterns were found
+- Some clustering appears due to randomness, not causality
+- Consecutive numbers appear in ~60% of draws
