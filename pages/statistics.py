@@ -26,7 +26,14 @@ freq = calculate_frequency(filtered)
 
 def check_number_position_frequency(number_to_search):
     """
-        Check the frequency of each number for each position from 1 to 6
+        Check the frequency of each number for each position from 1 to 6, if at least month or year selected
+
+        Args:
+            number_to_search (int):  the number for which to count the frequency for each position from 1 to 6
+
+        Return:
+            nothing:  if not selected at least 1 between month or year
+            void:  show the table with the frequencies of the number for each position from 1 to 6
     """
     if not (selected_year or selected_month):
         st.info("Selectează cel puțin anul sau luna.")
@@ -63,6 +70,16 @@ def analyze_next_number(data, number, position):
     """
         Check the frequency in the past for the situation when the number has been followed
         by a greater ore a lower one, in the specified position (from 1 to 5)
+
+        Args:
+            data (list):  the list with all the extractions
+            number (int): the actual number taken in consideration
+            position (int): the current position of the provided number
+
+        Return:
+            nothing:  if the number has not been found on the selected position
+            void:  show the table with all the frequencies of when a greater or lower number
+                    followed the current number in the current position
     """
     freq_greater = 0
     freq_lower = 0
