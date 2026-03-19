@@ -22,3 +22,8 @@ interval distributions, and exploratory pattern analysis.
 - Pandas
 - Streamlit
 - JSON for dataset storage
+
+## Interface Preview
+
+![App Screenshot](assets/Home-loto1.png)
+![App Screenshot](assets/Home-loto2.png)
