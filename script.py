@@ -40,15 +40,20 @@ def month_name_to_number(months):
     
     return numbered_months
 
-#
-#  Extract the dropdown elements from the html code of the URL website
-#       Provide:
-#           - the reference to the web-page
-#           - the reference of "dropdown_button" which allows to see the list of items of the dropdown
-#           - the reference of the "dropdown" which contains the effective items
-#           - the type of the dropdown, that describes the type of the elements (year/month)
-#
+
 def read_dropdown_elements(page, dropdown_button, dropdown, dropdown_type):
+    """
+        Extract the dropdown elements from the html code of the URL website
+
+        Args:
+            page (): the reference to the web-page
+            dropdown_button (): the reference of "dropdown_button" which allows to see the list of items of the dropdown
+            dropdown (): the reference of the "dropdown" which contains the effective items
+            dropdown_type (): the type of the dropdown, that describes the type of the elements (year/month)
+        
+        Return (VOID):
+            extract all the years available from the dropdown in the page
+    """
     page.locator(dropdown_button).click()
     page.wait_for_timeout(200)
 
@@ -66,10 +71,18 @@ def read_dropdown_elements(page, dropdown_button, dropdown, dropdown_type):
     """)
     time.sleep(0.1)  # scurt delay ca să aplice site-ul
 
-#
-#   Write the data to the json file
-#
+
 def write_to_json_file(file_path, data):
+    """
+        Write the data to the json file
+
+        Args:
+            file_path (string): the path for the file to write from
+            data (list): the container where to save the read file content
+        
+        Return (VOID):
+            update data container with the extracted elements from the file
+    """
     with open(file_path, 'w', encoding="utf-8") as file:
         json.dump(data, file, indent=2, ensure_ascii=False)
 
@@ -83,18 +96,24 @@ def count_occurencies(list, element):
             occurencies += 1
     return occurencies
 
-#
-#   SITUATION: as the page contains two type of number extractions for almost each extraction day
-#                we want to extract only the first time of this extraction, so we need to not add
-#                the extraction dates twice, with an exception for SPECIAL EXTRACTIONS
-#
-#   Checks if the current_date was used also for an extra extraction
-#    - extracted_dates > is the list with all the dates from specific year and month
-#    - dates > is the list with the current dates extracted
-#    - current_date > is the current date to check if the case to be added
-#    - special_extr > tells if the current date is from an extra extraction
-#
+
 def check_extra_extraction(extracted_dates, dates:list, current_date, special_extr):
+    """
+        SITUATION: as the page contains two type of number extractions for almost each extraction day
+                we want to extract only the first time of this extraction, so we need to not add
+                the extraction dates twice, with an exception for SPECIAL EXTRACTIONS
+
+        Checks if the current_date was used also for an extra extraction
+
+        Args:
+            extracted_dates (list): is the list with all the dates from specific year and month
+            dates (list): is the list with the current dates extracted
+            current_date (int): is the current date to check if the case to be added
+            special_extr (bool): tells if the current date is from an extra extraction
+
+        Return:
+            the updated dates with the extra extraction, if the case
+    """
     extr_dates_nr = count_occurencies(extracted_dates, current_date)
     cur_dates_list_nr = count_occurencies(dates, current_date)
 
@@ -104,7 +123,15 @@ def check_extra_extraction(extracted_dates, dates:list, current_date, special_ex
 
 
 def json_to_excel_file(objects_list):
-    # creează workbook Excel
+    """
+        Crea Excel workbook from json format
+
+        Args:
+            objects_list (list): the list with the extractions to write on the file
+
+        Return (void):
+            save the excel file with the extractions
+    """
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = "Rezultate"
@@ -145,12 +172,18 @@ def update_number_extraction(filePath, url):
         page.goto(url)
         page.wait_for_load_state("networkidle")
 
+        page.set_default_timeout(60000)     # 60 sec
+        page.set_default_navigation_timeout(60000)
+
         now = datetime.now()
 
         # ======== EXTRACT THE YEARS ========
         years = page.locator(YEAR_ITEMS_SELECTOR).all_inner_texts()
         years.sort()                        # Order cronologically
         years.remove("Selectati anul")      # Remove default option from lists
+        years.remove("1998")
+        years.remove("1999")
+        years.remove("2000")
 
         # ======== EXTRACT THE MONTHS ========
         months = page.locator(MONTH_ITEMS_SELECTOR).all_inner_texts()
@@ -159,11 +192,6 @@ def update_number_extraction(filePath, url):
         for year in years:
             # Extract year dropdown elements
             read_dropdown_elements(page, "div.select-an button", YEAR_ITEMS_SELECTOR, year)
-
-            # dacă e anul curent, limităm lunile
-            if int(year) == now.year:
-
-                months = [m for m in month_name_to_number(months) if int(m) <= now.month]
 
             for month in months:
                 # Selecte the current "checking-month" from dropdown
@@ -204,8 +232,6 @@ def update_number_extraction(filePath, url):
                 rows = [numbers[i:i+6] for i in range(0, len(numbers), 6)]
                 rows.reverse()
 
-                #print(f"\n📅 {year}-{month}")
-                # SAVE TO FILE current month's extractions
                 for i, row in enumerate(rows, 1):
                     if dates[i-1] not in month_results:     # if not yet added, create a list
                         month_results[dates[i-1]] = []
@@ -217,22 +243,14 @@ def update_number_extraction(filePath, url):
         browser.close()
 
 
-
 if __name__ == "__main__":
 
     file = joker_file     # change to joker for joker numbers
 
-    update_number_extraction(file, URL_joker)
+    update_number_extraction(file, URL_joker)      # change URL/URL_jiker + "6/49"/"joker"
 
     with open(file, "r", encoding="utf-8") as f:
         month_results = json.load(f)
 
     #json_to_excel_file(month_results)
 
-# TO DO:
-#   - Continue the app with queries about numbers
-#
-#   QUERIES:
-#    > How many times a number is chosen as first one in a year/all times
-#    > How many times a number < than N is chosen in a serie
-#    > How many times a number is chosen in a year
